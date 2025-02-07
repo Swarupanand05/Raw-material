@@ -1,0 +1,38 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int binarySearch(int* arr, int size, int target) {
+    int left = 0, right = size - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (arr[mid] == target) return mid;
+        else if (arr[mid] < target) left = mid + 1;
+        else right = mid - 1;
+    }
+    return left; // Return the index where the target would go
+}
+
+int* countSmaller(int* nums, int numsSize, int* returnSize) {
+    *returnSize = numsSize;
+    int* result = (int*)malloc(numsSize * sizeof(int)); // Result array to store the count
+    int* sorted = (int*)malloc(numsSize * sizeof(int)); // Array to store sorted elements
+    int sortedSize = 0;
+
+    // Traverse the array from right to left
+    for (int i = numsSize - 1; i >= 0; i--) {
+        int idx = binarySearch(sorted, sortedSize, nums[i]);
+        result[i] = idx; // The count of elements smaller than nums[i] is the index where nums[i] would be inserted in sorted order
+        
+        // Insert nums[i] into the sorted array using binary insertion
+        for (int j = sortedSize; j > idx; j--) {
+            sorted[j] = sorted[j - 1];
+        }
+        sorted[idx] = nums[i];
+        sortedSize++;
+    }
+
+    free(sorted);
+    return result;
+}
+
